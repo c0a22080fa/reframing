@@ -9,6 +9,7 @@ INPUT:
   - SYSTEM 1 (COMET): {comet_evidence}
   - ANALOGIES (Explorer): {explorer_evidence}
 - Action History: {history}
+- Critic Feedback (Previous Rejection): {critic_feedback}
 
 INSTRUCTIONS:
 You are the Chairperson. Decide the next step.
@@ -20,7 +21,8 @@ You are the Chairperson. Decide the next step.
 OUTPUT FORMAT (JSON):
 {{
   "next_step": "CALL_COMET" | "CALL_EXPLORER" | "FINALIZE",
-  "reasoning": "Why you made this decision...",
-  "deep_intent": "Formulate only if finalizing, else null",
-  "search_query": "Keywords for explorer if calling explorer, else null"
+  "reasoning": "Why this step?",
+  "deep_intent": "Draft intent (if FINALIZE)",
+  "search_query": "Query string (if CALL_EXPLORER)",
+  "comet_relations": ["xWant", "xReact", "xIntent"] (Select relevant relations if CALL_COMET)
 }}

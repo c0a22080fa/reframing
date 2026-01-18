@@ -8,9 +8,14 @@
       ],
       "constraints": [],
       "latent_needs": [
-        "Deep Intent Statement:\n\nThe user, a software engineer who loves Kyoto and is currently visiting, is frustrated by the rain not simply because of the weather, but because it threatens to diminish the value and enjoyment of their limited time in a beloved place; beneath the complaint lies a desire for meaningful, memorable experiences in Kyoto despite unforeseen obstacles.",
-        "**Deep Intent:**  \nThe user, a Kyoto enthusiast currently visiting but frustrated by rain, is seeking alternative enjoyable or meaningful experiences in Kyoto that can make their trip worthwhile despite the disappointing weather, reflecting a desire to maximize their limited time and emotional investment in a beloved city.",
-        "The user deeply desires to enjoy their time in Kyoto, but feels disappointed and frustrated because rain is preventing them from fully experiencing the city they love."
+        "The user is expressing disappointment about the rain during their visit to Kyoto, likely seeking empathy, commiseration, or suggestions for enjoyable indoor activities in Kyoto given the weather."
+      ],
+      "active_context": [
+        "京都に来ているが、雨が降っていて最悪"
+      ],
+      "evidence_log": [
+        "[COMET] {'source_en': \"I'm in Kyoto, but it's raining and it's the worst.\", 'xWant': [\"to stay dry\", \"to go inside\"], 'xReact': [\"disappointed\", \"annoyed\"], 'xIntent': [\"to enjoy the trip\", \"to avoid getting wet\"]}",
+        "[Explorer] [{'title': 'Kyoto Rainy Day Guide', 'snippet': 'Best indoor activities in Kyoto...', 'link': 'example.com'}]"
       ]
     }
   }

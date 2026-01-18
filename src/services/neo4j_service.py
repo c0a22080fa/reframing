@@ -52,7 +52,11 @@ class Neo4jService:
                 data = json.load(f)
             user = data.get("users", {}).get(user_id, {})
             print(f"[Local PKG] Read User: {user.get('attributes')}")
-            return {"attributes": user.get("attributes", [])}
+            return {
+                "attributes": user.get("attributes", []),
+                "latent_needs": user.get("latent_needs", []),
+                "evidence_log": user.get("evidence_log", [])
+            }
         else:
             query = """
             MATCH (u:User {id: $user_id})-[:HAS]->(a:Attribute)
@@ -61,6 +65,41 @@ class Neo4jService:
             with self.driver.session() as session:
                 result = session.run(query, user_id=user_id)
                 return {"attributes": [record["attribute"] for record in result]}
+
+    def write_active_node(self, user_id: str, text: str):
+        """Writes current interaction context"""
+        if self.use_local:
+            print(f"[Local PKG] Writing Active Context: {text}")
+            with open(self.local_db_path, "r") as f:
+                data = json.load(f)
+            
+            if user_id not in data["users"]:
+                data["users"][user_id] = {}
+            
+            # Simple list of recent interactions
+            data["users"][user_id].setdefault("active_context", []).append(text)
+            
+            with open(self.local_db_path, "w") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        else:
+            # Neo4j implementation placeholder
+            pass
+
+    def write_evidence(self, user_id: str, source: str, content: str):
+        """Writes intermediate evidence"""
+        if self.use_local:
+            print(f"[Local PKG] Writing Evidence ({source})")
+            with open(self.local_db_path, "r") as f:
+                data = json.load(f)
+            
+            entry = f"[{source}] {content}"
+            data["users"][user_id].setdefault("evidence_log", []).append(entry)
+            
+            with open(self.local_db_path, "w") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        else:
+             # Neo4j implementation placeholder
+             pass
 
     def write_inference(self, user_id: str, deep_intent: str):
         """Writes the inferred Deep Intent back to the Graph"""

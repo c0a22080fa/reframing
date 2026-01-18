@@ -23,7 +23,9 @@ graph TD;
     Validator --> Chair;
     Chair -- "Need Validation?" --> Explorer[Explorer Agent (Google Search)];
     Explorer --> Chair;
-    Chair -- "Sufficient Evidence" --> Memory[Memory Node (PKG Write)];
+    Chair -- "TENTATIVE Conclusion" --> Critic[Critic Agent];
+    Critic -- "REJECT (Loop)" --> Chair;
+    Critic -- "APPROVE" --> Memory[Memory Node (PKG Write)];
     Memory --> Nudge[Nudge Agent];
 ```
 

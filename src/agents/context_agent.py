@@ -9,8 +9,12 @@ class ContextAgent:
         Retrieves user static attributes and past constraints/needs.
         """
         profile = self.db.read_profile(user_id)
-        # potentially format this for prompt injection
-        context_str = f"User Profile: Attributes={profile.get('attributes', [])}"
+        # Format for RAG
+        context_str = (
+            f"User Profile: Attributes={profile.get('attributes', [])}\n"
+            f"Past Intentions: {profile.get('latent_needs', [])}\n"
+            f"Recent Evidence Log: {profile.get('evidence_log', [])[-5:]}" # Last 5 items
+        )
         return context_str
         return context_str
 
@@ -20,9 +24,14 @@ class ContextAgent:
 
     def write_active_node(self, user_id: str, text: str):
         """Writes the user input as an Active node in the graph."""
-        # Simple implementation: just log it or add to local DB
-        # For Local PKG, we can treat it similar to an attribute or event
         if hasattr(self.db, 'write_active_node'):
              self.db.write_active_node(user_id, text)
         else:
              print(f"[Context] simulating write of Active Node: {text}")
+
+    def store_evidence(self, user_id: str, source: str, content: str):
+        """Stores intermediate evidence (COMET/Explorer) to the graph."""
+        if hasattr(self.db, 'write_evidence'):
+            self.db.write_evidence(user_id, source, content)
+        else:
+            print(f"[Context] simulating write of {source} Evidence: {content}")

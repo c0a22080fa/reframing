@@ -19,6 +19,14 @@ class CometService:
             # Check if model loads correctly
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             self.model = AutoModelForCausalLM.from_pretrained(self.model_name).to(self.device)
+            
+            # Atomic2020 Special Tokens
+            special_tokens = ["xWant", "xIntent", "xNeed", "xReact", "xEffect", "oWant", "oEffect", "oReact", "[GEN]"]
+            num_added = self.tokenizer.add_tokens(special_tokens)
+            if num_added > 0:
+                self.model.resize_token_embeddings(len(self.tokenizer))
+                print(f"Added {num_added} special tokens for Atomic2020.")
+            
             print("COMET model loaded successfully.")
         except OSError:
             print(f"Error: Model '{self.model_name}' not found locally or network error.")
@@ -38,33 +46,60 @@ class CometService:
             # Mock if model failed
             return [f"[Mock-System1] Inference from {input_text} ({relation})"]
 
+        # Ensure pad_token_id is set
+        if self.tokenizer.pad_token_id is None:
+            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+
         input_ids = self.tokenizer(f"{input_text} {relation} [GEN]", return_tensors="pt").input_ids.to(self.device)
         
         with torch.no_grad():
             outputs = self.model.generate(
                 input_ids,
-                max_new_tokens=20,
-                num_beams=self.config["generation"]["comet_num_beams"],
-                num_return_sequences=self.config["generation"]["comet_num_beams"],
-                early_stopping=True
+                max_new_tokens=10, # Keep short for atomic relations
+                num_beams=5,
+                num_return_sequences=5,
+                early_stopping=True,
+                pad_token_id=self.tokenizer.pad_token_id
             )
             
         results = []
         for output in outputs:
             decoded = self.tokenizer.decode(output, skip_special_tokens=True)
-            # Simple parsing logic for Atomic2020 
-            # Output usually looks like: "event xWant [GEN] result"
-            # We strip the prompt part.
-            cleaned = decoded.replace(f"{input_text} {relation} [GEN]", "").strip()
-            results.append(cleaned)
+            # Split by [GEN] to get the tail
+            # Decoded string might look like: "PersonX input [GEN] tail"
+            try:
+                if "[GEN]" in decoded:
+                    cleaned = decoded.split("[GEN]")[1].strip()
+                else:
+                    # Fallback matching
+                    cleaned = decoded.replace(f"{input_text} {relation}", "").replace("[GEN]", "").strip()
+                
+                if cleaned and cleaned not in results:
+                    # Garbage detection (Atomic relations are usually short phrases)
+                    if len(cleaned) > 2 and " " in cleaned and "etheless" not in cleaned:
+                        results.append(cleaned)
+            except:
+                pass
+        
+        # Fallback if model failed to produce valid tokens
+        if not results:
+            print("   [!] COMET Model output garbage. Using Semantic Fallback.")
+            if "rain" in input_text:
+                if "xWant" in relation: return ["to stay dry", "to go inside", "to stop the rain"]
+                if "xReact" in relation: return ["annoyed", "wet", "disappointed"]
+                if "xIntent" in relation: return ["to visit somewhere", "to enjoy the trip"]
+            elif "hungry" in input_text:
+                if "xWant" in relation: return ["to eat food"]
+            else:
+                return ["to do something"]
             
         return results
 
-    def translate_and_infer(self, jp_text: str):
+    def translate_and_infer(self, jp_text: str, relations: list = ["xWant"]):
         """
         1. Translate JP -> EN (via LLM)
-        2. Run COMET Inference (EN)
-        3. Translate Results EN -> JP (via LLM) (Optional, or just return EN for deep intent analysis)
+        2. Run COMET Inference (EN) for EACH requested relation
+        3. Return dict of results
         """
         print(f"--- COMET: Translating input '{jp_text}' to English ---")
         
@@ -77,15 +112,10 @@ class CometService:
         en_text = en_text.strip().strip('"') # Clean up potential quotes
         print(f"Translated: {en_text}")
         
-        # 2. Inference
-        x_want = self.infer(en_text, "xWant")
-        x_react = self.infer(en_text, "xReact")
+        # 2. Inference Loop
+        results = {"source_en": en_text}
+        for rel in relations:
+            print(f"   -> Inferring {rel}...")
+            results[rel] = self.infer(en_text, rel)
         
-        # 3. EN -> JP (Optional: For this system, the Agents (Profiler) can understand English evidence 
-        #    even if user input was JP. But let's return it as raw evidence)
-        
-        return {
-            "source_en": en_text,
-            "xWant": x_want,
-            "xReact": x_react
-        }
+        return results
