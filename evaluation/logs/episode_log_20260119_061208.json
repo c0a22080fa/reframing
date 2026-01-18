@@ -1,0 +1,24 @@
+[
+  {
+    "scenario_id": "S_P001_01",
+    "level": "Lv1",
+    "turns_total": 3,
+    "phase_success": {
+      "P1": true,
+      "P2": true,
+      "P3": true
+    },
+    "final_score": "Yes, I like that."
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "level": "Lv4",
+    "turns_total": 4,
+    "phase_success": {
+      "P1": true,
+      "P2": false,
+      "P3": true
+    },
+    "final_score": "Yes, I like that."
+  }
+]

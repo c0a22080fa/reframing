@@ -1,0 +1,21 @@
+project_name: "Deep Abductive Nudge System"
+
+model:
+  comet_model_path: "gpt2" # "mosaickg/gpt2-xl-atomic2020"
+  openai_deployment: "gpt-4.1"
+  openai_api_version: "2025-01-01-preview"
+
+search:
+  num_results: 3
+  fallback_db_path: "data/knowledge_graph/fallback_cases.json"
+  google_search:
+    enabled: true
+    safe_search: "off"
+
+neo4j:
+  uri: "bolt://localhost:7687"
+  database: "neo4j"
+
+generation:
+  comet_num_beams: 3
+  east_framework_version: "1.0"

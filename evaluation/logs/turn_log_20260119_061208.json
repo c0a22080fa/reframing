@@ -1,0 +1,100 @@
+[
+  {
+    "scenario_id": "S_P001_01",
+    "turn_index": 0,
+    "role": "user",
+    "text": "雨の京都を楽しみたい",
+    "phase": "INIT"
+  },
+  {
+    "scenario_id": "S_P001_01",
+    "turn_index": 1,
+    "role": "system",
+    "text": "Are you sad about the rain?",
+    "phase": "CONFIRM_INTENT"
+  },
+  {
+    "scenario_id": "S_P001_01",
+    "turn_index": 1,
+    "role": "user",
+    "text": "はい、その通りです。",
+    "phase": "CONFIRM_INTENT"
+  },
+  {
+    "scenario_id": "S_P001_01",
+    "turn_index": 2,
+    "role": "system",
+    "text": "Yes, that is correct.",
+    "phase": "PROPOSE_REFRAME"
+  },
+  {
+    "scenario_id": "S_P001_01",
+    "turn_index": 2,
+    "role": "user",
+    "text": "いいですね、そういう楽しみ方も素敵です。",
+    "phase": "PROPOSE_REFRAME"
+  },
+  {
+    "scenario_id": "S_P001_01",
+    "turn_index": 3,
+    "role": "system",
+    "text": "{\"reframe_statement\": \"Rain is cozy.\", \"check_question\": \"Do you like coziness?\"}",
+    "phase": "FINISHED"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 0,
+    "role": "user",
+    "text": "京都で美味しいランチが食べたい",
+    "phase": "INIT"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 1,
+    "role": "system",
+    "text": "Are you sad about the rain?",
+    "phase": "CONFIRM_INTENT"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 1,
+    "role": "user",
+    "text": "いいえ、実は賑やかな場所は苦手で、一人で静かに過ごしたいんです。",
+    "phase": "CONFIRM_INTENT"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 2,
+    "role": "system",
+    "text": "Are you sad about the rain?",
+    "phase": "CONFIRM_INTENT"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 2,
+    "role": "user",
+    "text": "はい。",
+    "phase": "CONFIRM_INTENT"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 3,
+    "role": "system",
+    "text": "Yes, that is correct.",
+    "phase": "PROPOSE_REFRAME"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 3,
+    "role": "user",
+    "text": "なるほど、静寂を楽しむランチですね。",
+    "phase": "PROPOSE_REFRAME"
+  },
+  {
+    "scenario_id": "S_P001_04A",
+    "turn_index": 4,
+    "role": "system",
+    "text": "{\"reframe_statement\": \"Rain is cozy.\", \"check_question\": \"Do you like coziness?\"}",
+    "phase": "FINISHED"
+  }
+]

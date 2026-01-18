@@ -6,24 +6,30 @@ config:
 graph TD;
 	__start__([<p>__start__</p>]):::first
 	input_processor(input_processor)
+	router(router)
 	profiler_chair(profiler_chair)
 	witness_comet(witness_comet)
 	explorer_agent(explorer_agent)
 	critic_agent(critic_agent)
-	memory_node(memory_node)
-	nudge_agent(nudge_agent)
+	intent_confirmer(intent_confirmer)
+	reframe_proposer(reframe_proposer)
+	action_nudge(action_nudge)
 	__end__([<p>__end__</p>]):::last
 	__start__ --> input_processor;
-	critic_agent -. &nbsp;approve&nbsp; .-> memory_node;
-	critic_agent -. &nbsp;reject&nbsp; .-> profiler_chair;
+	critic_agent -.-> intent_confirmer;
+	critic_agent -.-> profiler_chair;
 	explorer_agent --> profiler_chair;
-	input_processor --> profiler_chair;
-	memory_node --> nudge_agent;
-	profiler_chair -. &nbsp;finalize&nbsp; .-> critic_agent;
-	profiler_chair -. &nbsp;tool_explorer&nbsp; .-> explorer_agent;
-	profiler_chair -. &nbsp;tool_comet&nbsp; .-> witness_comet;
+	input_processor --> router;
+	profiler_chair -.-> critic_agent;
+	profiler_chair -.-> explorer_agent;
+	profiler_chair -.-> witness_comet;
+	router -.-> action_nudge;
+	router -.-> profiler_chair;
+	router -.-> reframe_proposer;
 	witness_comet --> profiler_chair;
-	nudge_agent --> __end__;
+	action_nudge --> __end__;
+	intent_confirmer --> __end__;
+	reframe_proposer --> __end__;
 	classDef default fill:#f2f0ff,line-height:1.2
 	classDef first fill-opacity:0
 	classDef last fill:#bfb6fc

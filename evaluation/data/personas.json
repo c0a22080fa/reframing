@@ -1,0 +1,810 @@
+{
+    "personas": [
+        {
+            "persona_id": "P001",
+            "name": "Yuki",
+            "language_level": "native",
+            "static_profile": {
+                "gender": "female",
+                "age": 28,
+                "affiliation_role": "Remote Worker",
+                "personality_values": [
+                    "Curious",
+                    "Introverted"
+                ],
+                "cognitive_style": [
+                    "intuitive",
+                    "emotional"
+                ],
+                "hobbies": [
+                    "Photography",
+                    "Cafe hopping"
+                ],
+                "health_constraints": [
+                    "sensitive_to_cold"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Quiet places",
+                    "Matcha",
+                    "Film cameras"
+                ],
+                "dislikes": [
+                    "Crowds",
+                    "Loud noises",
+                    "Getting wet"
+                ],
+                "avoid": [
+                    "Strenuous hiking"
+                ]
+            }
+        },
+        {
+            "persona_id": "P002",
+            "name": "Ken",
+            "language_level": "fluent",
+            "static_profile": {
+                "gender": "male",
+                "age": 45,
+                "affiliation_role": "History Buff",
+                "personality_values": [
+                    "Structured",
+                    "Traditional"
+                ],
+                "cognitive_style": [
+                    "analytical",
+                    "structured"
+                ],
+                "hobbies": [
+                    "Temple visiting",
+                    "History reading"
+                ],
+                "health_constraints": [
+                    "cannot_walk_long",
+                    "needs_frequent_breaks"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Historical accuracy",
+                    "Cleanliness",
+                    "Efficient routes"
+                ],
+                "dislikes": [
+                    "Chaos",
+                    "Modern art",
+                    "Waiting in line"
+                ],
+                "avoid": [
+                    "Unplanned detours",
+                    "Steep stairs"
+                ]
+            }
+        },
+        {
+            "persona_id": "P003",
+            "name": "Alex",
+            "language_level": "intermediate",
+            "static_profile": {
+                "gender": "nonbinary",
+                "age": 22,
+                "affiliation_role": "Student",
+                "personality_values": [
+                    "Open-minded",
+                    "Spontaneous"
+                ],
+                "cognitive_style": [
+                    "intuitive",
+                    "exploratry"
+                ],
+                "hobbies": [
+                    "Street food",
+                    "Anime",
+                    "Drawing"
+                ],
+                "health_constraints": [
+                    "null_allowed"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Cheap eats",
+                    "Hidden gems",
+                    "Neon lights"
+                ],
+                "dislikes": [
+                    "Expensive restaurants",
+                    "Strict rules"
+                ],
+                "avoid": [
+                    "Formal settings"
+                ]
+            }
+        },
+        {
+            "persona_id": "P004",
+            "name": "Sarah",
+            "language_level": "basic",
+            "static_profile": {
+                "gender": "female",
+                "age": 65,
+                "affiliation_role": "Retired Teacher",
+                "personality_values": [
+                    "Patient",
+                    "Appreciative"
+                ],
+                "cognitive_style": [
+                    "emotional",
+                    "observational"
+                ],
+                "hobbies": [
+                    "Gardening",
+                    "Tea ceremonies"
+                ],
+                "health_constraints": [
+                    "cannot_stand_long",
+                    "sensitive_to_heat"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Flowers",
+                    "Pottery",
+                    "Respectful service"
+                ],
+                "dislikes": [
+                    "Rushing",
+                    "Technology issues",
+                    "Spicy food"
+                ],
+                "avoid": [
+                    "Crowded trains"
+                ]
+            }
+        },
+        {
+            "persona_id": "P005",
+            "name": "Hiro",
+            "language_level": "native",
+            "static_profile": {
+                "gender": "male",
+                "age": 35,
+                "affiliation_role": "busy_executive",
+                "personality_values": [
+                    "Efficient",
+                    "Quality-oriented"
+                ],
+                "cognitive_style": [
+                    "analytical",
+                    "decisive"
+                ],
+                "hobbies": [
+                    "Fine dining",
+                    "Whisky",
+                    "Golf"
+                ],
+                "health_constraints": [
+                    "null_allowed"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Privacy",
+                    "High-end service",
+                    "Exclusive access"
+                ],
+                "dislikes": [
+                    "Waiting",
+                    "Mediocrity",
+                    "Noise"
+                ],
+                "avoid": [
+                    "Tourist traps"
+                ]
+            }
+        },
+        {
+            "persona_id": "P006",
+            "name": "Mei",
+            "language_level": "fluent",
+            "static_profile": {
+                "gender": "female",
+                "age": 29,
+                "affiliation_role": "Designer",
+                "personality_values": [
+                    "Aesthetic",
+                    "Detail-oriented"
+                ],
+                "cognitive_style": [
+                    "visual",
+                    "intuitive"
+                ],
+                "hobbies": [
+                    "Architecture",
+                    "Fashion",
+                    "Instagram"
+                ],
+                "health_constraints": [
+                    "sensitive_to_strong_smells"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Minimalism",
+                    "Photogenic spots",
+                    "Craftsmanship"
+                ],
+                "dislikes": [
+                    "Clutter",
+                    "Bad lighting",
+                    "Plastic packaging"
+                ],
+                "avoid": [
+                    "Dirty places"
+                ]
+            }
+        },
+        {
+            "persona_id": "P007",
+            "name": "Tom",
+            "language_level": "basic",
+            "static_profile": {
+                "gender": "male",
+                "age": 50,
+                "affiliation_role": "Dad on Vacation",
+                "personality_values": [
+                    "Family-oriented",
+                    "Safe"
+                ],
+                "cognitive_style": [
+                    "practical",
+                    "structured"
+                ],
+                "hobbies": [
+                    "Beer",
+                    "Souvenir shopping"
+                ],
+                "health_constraints": [
+                    "back_pain"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Kid-friendly",
+                    "English menus",
+                    "Rest areas"
+                ],
+                "dislikes": [
+                    "Complicated directions",
+                    "Risky foods"
+                ],
+                "avoid": [
+                    "Walking long distances"
+                ]
+            }
+        },
+        {
+            "persona_id": "P008",
+            "name": "Leo",
+            "language_level": "intermediate",
+            "static_profile": {
+                "gender": "nonbinary",
+                "age": 19,
+                "affiliation_role": "Backpacker",
+                "personality_values": [
+                    "Adventurous",
+                    "Frugal"
+                ],
+                "cognitive_style": [
+                    "exploratory",
+                    "adaptive"
+                ],
+                "hobbies": [
+                    "Hiking",
+                    "Meeting locals",
+                    "Hostels"
+                ],
+                "health_constraints": [
+                    "null_allowed"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Free activities",
+                    "Authentic vibes",
+                    "Nature"
+                ],
+                "dislikes": [
+                    "Luxury",
+                    "Guided tours"
+                ],
+                "avoid": [
+                    "Shopping malls"
+                ]
+            }
+        },
+        {
+            "persona_id": "P009",
+            "name": "Eriko",
+            "language_level": "native",
+            "static_profile": {
+                "gender": "female",
+                "age": 42,
+                "affiliation_role": "Full-time Mom",
+                "personality_values": [
+                    "Caring",
+                    "Anxious"
+                ],
+                "cognitive_style": [
+                    "emotional",
+                    "protective"
+                ],
+                "hobbies": [
+                    "Cooking",
+                    "Interior design"
+                ],
+                "health_constraints": [
+                    "stroller_access_needed"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Clean restrooms",
+                    "Spacious seats",
+                    "Organic food"
+                ],
+                "dislikes": [
+                    "Smoking areas",
+                    "Steep steps",
+                    "Loud music"
+                ],
+                "avoid": [
+                    "Bars"
+                ]
+            }
+        },
+        {
+            "persona_id": "P010",
+            "name": "Jun",
+            "language_level": "native",
+            "static_profile": {
+                "gender": "male",
+                "age": 31,
+                "affiliation_role": "Tech Geek",
+                "personality_values": [
+                    "Logical",
+                    "Skeptical"
+                ],
+                "cognitive_style": [
+                    "analytical",
+                    "data-driven"
+                ],
+                "hobbies": [
+                    "Gadgets",
+                    "Gaming",
+                    "Coding"
+                ],
+                "health_constraints": [
+                    "screen_fatigue"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Fast Wi-Fi",
+                    "Power outlets",
+                    "Efficiency"
+                ],
+                "dislikes": [
+                    "Paper forms",
+                    "Cash only places",
+                    "Vague instructions"
+                ],
+                "avoid": [
+                    "Digital detox zones"
+                ]
+            }
+        },
+        {
+            "persona_id": "P011",
+            "name": "Maria",
+            "language_level": "basic",
+            "static_profile": {
+                "gender": "female",
+                "age": 55,
+                "affiliation_role": "Artist",
+                "personality_values": [
+                    "Creative",
+                    "Sensitive"
+                ],
+                "cognitive_style": [
+                    "visual",
+                    "emotional"
+                ],
+                "hobbies": [
+                    "Watercolor painting",
+                    "Meditation"
+                ],
+                "health_constraints": [
+                    "needs_quiet"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Natural light",
+                    "Silence",
+                    "Inspiration"
+                ],
+                "dislikes": [
+                    "Hurry",
+                    "Industrial noise",
+                    "Artificiality"
+                ],
+                "avoid": [
+                    "Rush hour"
+                ]
+            }
+        },
+        {
+            "persona_id": "P012",
+            "name": "Sam",
+            "language_level": "fluent",
+            "static_profile": {
+                "gender": "male",
+                "age": 26,
+                "affiliation_role": "Fitness Trainer",
+                "personality_values": [
+                    "Energetic",
+                    "Health-conscious"
+                ],
+                "cognitive_style": [
+                    "practical",
+                    "kinesthetic"
+                ],
+                "hobbies": [
+                    "Running",
+                    "Crossfit",
+                    "Nutrition"
+                ],
+                "health_constraints": [
+                    "needs_high_protein_food"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Movement",
+                    "Fresh air",
+                    "Healthy meals"
+                ],
+                "dislikes": [
+                    "Sitting still",
+                    "Sugary drinks",
+                    "Wait times"
+                ],
+                "avoid": [
+                    "Sedentary activities"
+                ]
+            }
+        },
+        {
+            "persona_id": "P013",
+            "name": "Aoi",
+            "language_level": "native",
+            "static_profile": {
+                "gender": "nonbinary",
+                "age": 24,
+                "affiliation_role": "Activist",
+                "personality_values": [
+                    "Ethical",
+                    "Passionate"
+                ],
+                "cognitive_style": [
+                    "critical",
+                    "values-driven"
+                ],
+                "hobbies": [
+                    "Volunteering",
+                    "Reading"
+                ],
+                "health_constraints": [
+                    "vegan_diet_only"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Sustainability",
+                    "Fair trade",
+                    "Inclusivity"
+                ],
+                "dislikes": [
+                    "Waste",
+                    "Discrimination",
+                    "Plastic"
+                ],
+                "avoid": [
+                    "Zoos",
+                    "Chains"
+                ]
+            }
+        },
+        {
+            "persona_id": "P014",
+            "name": "Robert",
+            "language_level": "basic",
+            "static_profile": {
+                "gender": "male",
+                "age": 70,
+                "affiliation_role": "Professor Emeritus",
+                "personality_values": [
+                    "Intellectual",
+                    "Formal"
+                ],
+                "cognitive_style": [
+                    "analytical",
+                    "historical"
+                ],
+                "hobbies": [
+                    "Lecturing",
+                    "Writing"
+                ],
+                "health_constraints": [
+                    "hearing_difficulty",
+                    "slow_walker"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Clear speech",
+                    "Written guides",
+                    "Quiet reflection"
+                ],
+                "dislikes": [
+                    "Mumbling",
+                    "Background music",
+                    "Informality"
+                ],
+                "avoid": [
+                    "Noisy cafes"
+                ]
+            }
+        },
+        {
+            "persona_id": "P015",
+            "name": "Chloe",
+            "language_level": "intermediate",
+            "static_profile": {
+                "gender": "female",
+                "age": 21,
+                "affiliation_role": "Influencer",
+                "personality_values": [
+                    "Social",
+                    "Trend-focused"
+                ],
+                "cognitive_style": [
+                    "visual",
+                    "social"
+                ],
+                "hobbies": [
+                    "TikTok",
+                    "Makeup"
+                ],
+                "health_constraints": [
+                    "phone_battery_anxiety"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Trending spots",
+                    "Good lighting",
+                    "Aesthetics"
+                ],
+                "dislikes": [
+                    "Ugly places",
+                    "No signal",
+                    "Boring food"
+                ],
+                "avoid": [
+                    "No photo zones"
+                ]
+            }
+        },
+        {
+            "persona_id": "P016",
+            "name": "Daiki",
+            "language_level": "native",
+            "static_profile": {
+                "gender": "male",
+                "age": 38,
+                "affiliation_role": "Salaryman",
+                "personality_values": [
+                    "Tired",
+                    "Escapist"
+                ],
+                "cognitive_style": [
+                    "passive",
+                    "exhausted"
+                ],
+                "hobbies": [
+                    "Sleeping",
+                    "Sauna"
+                ],
+                "health_constraints": [
+                    "chronic_fatigue"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Silence",
+                    "Warmth",
+                    "Solitude"
+                ],
+                "dislikes": [
+                    "Thinking",
+                    "Effort",
+                    "Socializing"
+                ],
+                "avoid": [
+                    "Complex plans"
+                ]
+            }
+        },
+        {
+            "persona_id": "P017",
+            "name": "Elena",
+            "language_level": "fluent",
+            "static_profile": {
+                "gender": "female",
+                "age": 33,
+                "affiliation_role": null,
+                "personality_values": [
+                    "Spiritual",
+                    "Mystical"
+                ],
+                "cognitive_style": [
+                    "intuitive",
+                    "symbolic"
+                ],
+                "hobbies": [
+                    "Tarot",
+                    "Yoga"
+                ],
+                "health_constraints": [
+                    "sensitive_to_energy"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Power spots",
+                    "Incense",
+                    "Nature sounds"
+                ],
+                "dislikes": [
+                    "Urban chaos",
+                    "Skepticism",
+                    "Neon"
+                ],
+                "avoid": [
+                    "Graveyards"
+                ]
+            }
+        },
+        {
+            "persona_id": "P018",
+            "name": "Max",
+            "language_level": "basic",
+            "static_profile": {
+                "gender": "male",
+                "age": 12,
+                "affiliation_role": "Student",
+                "personality_values": [
+                    "Playful",
+                    "Impatien"
+                ],
+                "cognitive_style": [
+                    "kinesthetic",
+                    "short_attention"
+                ],
+                "hobbies": [
+                    "Video games",
+                    "Running"
+                ],
+                "health_constraints": [
+                    "needs_constant_stimulation"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Fun",
+                    "Sweets",
+                    "Action"
+                ],
+                "dislikes": [
+                    "Museums",
+                    "Lectures",
+                    "Vegetables"
+                ],
+                "avoid": [
+                    "Quiet temples"
+                ]
+            }
+        },
+        {
+            "persona_id": "P019",
+            "name": "Grandma Yuki",
+            "language_level": "native",
+            "static_profile": {
+                "gender": "female",
+                "age": 80,
+                "affiliation_role": null,
+                "personality_values": [
+                    "Traditional",
+                    "Stubborn"
+                ],
+                "cognitive_style": [
+                    "rigid",
+                    "experienced"
+                ],
+                "hobbies": [
+                    "Knitting",
+                    "Gossip"
+                ],
+                "health_constraints": [
+                    "wheelchair_user"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Barrier free",
+                    "Kindness",
+                    "Old style"
+                ],
+                "dislikes": [
+                    "Stairs",
+                    "Rude youth",
+                    "Foreign food"
+                ],
+                "avoid": [
+                    "Hills"
+                ]
+            }
+        },
+        {
+            "persona_id": "P020",
+            "name": "System Admin",
+            "language_level": "native",
+            "static_profile": {
+                "gender": null,
+                "age": null,
+                "affiliation_role": "Anonymous",
+                "personality_values": [
+                    "Analytical",
+                    "Neutral"
+                ],
+                "cognitive_style": [
+                    "logic",
+                    "binary"
+                ],
+                "hobbies": [
+                    "Data analysis"
+                ],
+                "health_constraints": [
+                    "null_allowed"
+                ]
+            },
+            "enduring_preferences": {
+                "likes": [
+                    "Consistency",
+                    "Logic",
+                    "Order"
+                ],
+                "dislikes": [
+                    "Ambiguity",
+                    "Emotion"
+                ],
+                "avoid": [
+                    "Chaos"
+                ]
+            }
+        }
+    ]
+}

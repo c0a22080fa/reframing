@@ -17,19 +17,7 @@
         "雨の京都を楽しみたい",
         "雨の京都を楽しみたい",
         "はい",
-        "いいですね",
-        "Yes, that sounds correct.",
-        "I am disappointed by the rain in Kyoto.",
-        "I am disappointed by the rain in Kyoto.",
-        "Yes, that is correct.",
-        "Yes, I like that.",
-        "雨の京都を楽しみたい",
-        "はい、その通りです。",
-        "いいですね、そういう楽しみ方も素敵です。",
-        "京都で美味しいランチが食べたい",
-        "いいえ、実は賑やかな場所は苦手で、一人で静かに過ごしたいんです。",
-        "はい。",
-        "なるほど、静寂を楽しむランチですね。"
+        "いいですね"
       ],
       "evidence_log": [
         "[COMET] {'source_en': \"I'm in Kyoto, but it's raining and it's the worst.\", 'xWant': [\"to stay dry\", \"to go inside\"], 'xReact': [\"disappointed\", \"annoyed\"], 'xIntent': [\"to enjoy the trip\", \"to avoid getting wet\"]}",
