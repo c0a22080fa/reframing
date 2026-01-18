@@ -11,17 +11,23 @@ class AbductionSquad:
         self.llm = llm
         
         # Determine strict configuration for AutoGen
-        # In a real scenario, we pass the API key directly or use the env var
+        # Adapt to dual provider support in OpenAIService
+        
+        config_entry = {
+            "model": self.llm.model_name or self.llm.deployment,
+            "api_key": self.llm.azure_api_key or self.llm.openai_api_key,
+        }
+        
+        # Add Azure specific fields if Azure is used
+        if self.llm.azure_api_key:
+            config_entry.update({
+                "base_url": self.llm.azure_endpoint,
+                "api_type": "azure",
+                "api_version": self.llm.api_version
+            })
+            
         self.llm_config = {
-            "config_list": [
-                {
-                    "model": self.llm.deployment, # e.g. "gpt-4"
-                    "api_key": self.llm.api_key,
-                    "base_url": self.llm.endpoint,
-                    "api_type": "azure",
-                    "api_version": self.llm.api_version
-                }
-            ],
+            "config_list": [config_entry],
             "temperature": 0.7,
         }
         

@@ -1,9 +1,9 @@
 project_name: "Deep Abductive Nudge System"
 
 model:
-  comet_model_path: "mosaickg/gpt2-xl-atomic2020"
-  openai_deployment: "gpt-4"
-  openai_api_version: "2023-05-15"
+  comet_model_path: "gpt2" # "mosaickg/gpt2-xl-atomic2020"
+  openai_deployment: "gpt-4.1"
+  openai_api_version: "2025-01-01-preview"
 
 search:
   num_results: 3
