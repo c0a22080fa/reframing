@@ -33,6 +33,28 @@ class OpenAIService:
             self.client = None
             print("No Valid OpenAI credentials found (Azure or Standard). Using Mock response.")
 
+    def get_chat_model(self, temperature=0.7):
+        """Returns a LangChain compatible Chat Model (Azure or Standard)"""
+        from langchain_openai import AzureChatOpenAI, ChatOpenAI
+
+        if self.azure_api_key:
+            return AzureChatOpenAI(
+                azure_deployment=self.deployment,
+                openai_api_version=self.api_version,
+                azure_endpoint=self.azure_endpoint,
+                api_key=self.azure_api_key,
+                temperature=temperature
+            )
+        elif self.openai_api_key:
+            return ChatOpenAI(
+                model=self.model_name,
+                api_key=self.openai_api_key,
+                temperature=temperature
+            )
+        else:
+            raise ValueError("No Valid OpenAI Credentials for LangChain")
+
+
     def chat_completion(self, messages, temperature=0.7):
         if not self.client:
             last_msg = messages[-1]['content']

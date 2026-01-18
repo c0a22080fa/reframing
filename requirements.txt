@@ -1,4 +1,9 @@
 neo4j>=5.0.0
+# Dependencies
+langgraph
+langchain
+langchain-openai
+langchain-community
 openai>=1.0.0
 transformers>=4.30.0
 torch>=2.0.0

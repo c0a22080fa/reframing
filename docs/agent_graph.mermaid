@@ -1,0 +1,26 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	input_processor(input_processor)
+	profiler_chair(profiler_chair)
+	witness_comet(witness_comet)
+	explorer_agent(explorer_agent)
+	memory_node(memory_node)
+	nudge_agent(nudge_agent)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> input_processor;
+	explorer_agent --> profiler_chair;
+	input_processor --> profiler_chair;
+	memory_node --> nudge_agent;
+	profiler_chair -. &nbsp;tool_explorer&nbsp; .-> explorer_agent;
+	profiler_chair -. &nbsp;finalize&nbsp; .-> memory_node;
+	profiler_chair -. &nbsp;tool_comet&nbsp; .-> witness_comet;
+	witness_comet --> profiler_chair;
+	nudge_agent --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
