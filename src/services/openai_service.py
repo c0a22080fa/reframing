@@ -52,12 +52,19 @@ class OpenAIService:
                 temperature=temperature
             )
         else:
-            raise ValueError("No Valid OpenAI Credentials for LangChain")
+            print("WARNING: No OpenAI Credentials. Returning MockChatModel.")
+            return MockChatModel()
 
 
     def chat_completion(self, messages, temperature=0.7):
         if not self.client:
+            # Mock Logic for Translation (used by CometService)
             last_msg = messages[-1]['content']
+            if "Translate" in messages[0]['content'] or "translation" in messages[0]['content']:
+                # Return a dummy translation. For simple mocking, just return the input or a fixed EN string.
+                # Assuming input is JP, let's just return "I want to relax" as a generic fallback 
+                # or try to use the alphanumeric parts if any. 
+                return "I want to relax and find peace."
             return f"[Mock LLM Response] I processed: {last_msg[:20]}..."
 
         try:
@@ -70,3 +77,68 @@ class OpenAIService:
         except Exception as e:
             print(f"LLM Error: {e}")
             return "Error in LLM generation."
+
+
+class MockChatModel:
+    def invoke(self, messages):
+        from langchain_core.messages import AIMessage
+        content = messages[0].content
+        
+        # 1. Profiler Chair
+        if "ROLE: Profiler Chair" in content:
+            # Return FINALIZE directly to check the Nudge flow
+            return AIMessage(content='''
+            {
+              "next_step": "FINALIZE",
+              "reasoning": "Mock reasoning: Sufficient evidence.",
+              "deep_intent": "Deep Intent: Seeking inner peace and tranquility.",
+              "comet_relations": ["xWant"]
+            }
+            ''')
+            
+        # 2. Critic
+        if "ROLE: Critic Agent" in content:
+            return AIMessage(content='''
+            {
+              "status": "APPROVE",
+              "reason": "Mock Approval",
+              "feedback": "None"
+            }
+            ''')
+
+        # 3. Intent Confirmer
+        if "ROLE: Intent Confirmer" in content or "confirmation_question" in content or "User input:" in content: 
+             # Heuristic match for intent confirmer prompt (dialogue_intent_check)
+             return AIMessage(content='''
+             {
+                "confirmation_question": "本当の目的は、静かな場所で心を落ち着けることですか？"
+             }
+             ''')
+
+        # 4. Reframe Proposer
+        if "ROLE: Reframe Proposer" in content or "reframe_statement" in content:
+             return AIMessage(content='''
+             {
+                "reframe_statement": "騒がしい場所を避けて、自分だけの隠れ家を見つける冒険と考えましょう。",
+                "check_question": "この考え方はいかがですか？"
+             }
+             ''')
+
+        # 5. Nudge Agent
+        if "ROLE: Nudge Agent" in content:
+             return AIMessage(content='''
+             {
+               "east_justification": {
+                 "Easy": "予約不要",
+                 "Attractive": "静寂な雰囲気",
+                 "Social": "知る人ぞ知る場所",
+                 "Timely": "今からすぐ"
+               },
+               "reframed_perspective": "視点を変えて、静寂を楽しむ心の旅に出ましょう。",
+               "concrete_next_step": "近くの寺院の庭園を訪れる。",
+               "invitation_text": "喧騒を離れて、心静かな時間を過ごしませんか？",
+               "revision_question": "このプランでよろしいでしょうか？"
+             }
+             ''')
+
+        return AIMessage(content="[Mock Chat Model Default Response]")

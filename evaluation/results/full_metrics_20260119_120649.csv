@@ -1,0 +1,3 @@
+Condition,Episode,Level,Success,Turns,Actionability,Compliance,IntentAcc,RepairTurns,ReframeEndorse
+C0,S_P001_01,Lv1,1,1,5,1,,0,
+C1,S_P001_01,Lv1,1,1,5,1,1.0,0,1.0

@@ -96,7 +96,7 @@ class UserSimulator:
         prompt = f"""
         ROLE: User Judge
         GOLD REQUIREMENTS: {self.gold.get('gold_actionability_requirements')}
-        SYSTEM NUDGE: {nudge_json}
+        SYSTEM NUDGE: {json.dumps(nudge_json, ensure_ascii=False)}
         
         TASK: Rate if the nudge meets requirements (0-5).
         OUTPUT: "Score: X/5. Comment: ..."

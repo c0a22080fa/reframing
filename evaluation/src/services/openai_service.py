@@ -2,11 +2,85 @@ from openai import AzureOpenAI, OpenAI
 import os
 import yaml
 
-# Global singleton for mock model
-_SHARED_MOCK_MODEL = None
+class MockChatModel:
+    def invoke(self, messages):
+        from langchain_core.messages import AIMessage
+        content = messages[0].content
+        
+        # 1. Profiler Chair
+        if "ROLE: Profiler Chair" in content:
+            # Dynamic Mock Logic: Call COMET if no evidence yet
+            if "SYSTEM 1 (COMET): []" in content or "SYSTEM 1 (COMET): None" in content:
+                return AIMessage(content='''
+                {
+                  "next_step": "CALL_COMET",
+                  "reasoning": "Need intuition.",
+                  "comet_relations": ["xWant", "xIntent"]
+                }
+                ''')
+            
+            # Return FINALIZE if we have evidence (or second turn)
+            return AIMessage(content='''
+            {
+              "next_step": "FINALIZE",
+              "reasoning": "Mock logic: Sufficient evidence for evaluation.",
+              "deep_intent": "Deep Intent: Seeking tranquility and inner peace.",
+              "comet_relations": ["xWant"]
+            }
+            ''')
+            
+        # 2. Critic
+        if "ROLE: Critic Agent" in content:
+            return AIMessage(content='''
+            {
+              "status": "APPROVE",
+              "reason": "Mock Approval",
+              "feedback": "None"
+            }
+            ''')
+
+        # 3. Intent Confirmer
+        if "ROLE: Intent Confirmer" in content or "confirmation_question" in content: 
+             return AIMessage(content='''
+             {
+                "confirmation_question": "本当の目的は、静かな場所で心を落ち着けることですか？"
+             }
+             ''')
+
+        # 4. Reframe Proposer
+        if "ROLE: Reframe Proposer" in content or "reframe_statement" in content:
+             return AIMessage(content='''
+             {
+                "reframe_statement": "騒がしい場所を避けて、自分だけの隠れ家を見つける冒険と考えましょう。",
+                "check_question": "この考え方はいかがですか？"
+             }
+             ''')
+
+        # 5. Nudge Agent
+        if "ROLE: Nudge Agent" in content:
+             return AIMessage(content='''
+             {
+               "east_justification": {
+                 "Easy": "予約不要",
+                 "Attractive": "静寂な雰囲気",
+                 "Social": "知る人ぞ知る場所",
+                 "Timely": "今からすぐ"
+               },
+               "reframed_perspective": "視点を変えて、静寂を楽しむ心の旅に出ましょう。",
+               "concrete_next_step": "近くの寺院の庭園を訪れる。",
+               "invitation_text": "喧騒を離れて、心静かな時間を過ごしませんか？",
+               "revision_question": "このプランでよろしいでしょうか？"
+             }
+             ''')
+
+        return AIMessage(content="[Mock Chat Model Default Response]")
 
 class OpenAIService:
     def __init__(self, config_path="config/settings.yaml"):
+        # Fix path if running from evaluation dir
+        if not os.path.exists(config_path) and os.path.exists("../config/settings.yaml"):
+            config_path = "../config/settings.yaml"
+
         with open(config_path, "r") as f:
             self.config = yaml.safe_load(f)
 
@@ -30,7 +104,6 @@ class OpenAIService:
         elif self.openai_api_key:
             print("Using Standard OpenAI Service.")
             self.client = OpenAI(api_key=self.openai_api_key)
-            # If using standard OpenAI, 'openai_deployment' in config usually represents the model name (e.g. gpt-4)
             self.model_name = self.deployment
         else:
             self.client = None
@@ -38,9 +111,8 @@ class OpenAIService:
 
     def get_chat_model(self, temperature=0.7):
         """Returns a LangChain compatible Chat Model (Azure or Standard)"""
-        from langchain_openai import AzureChatOpenAI, ChatOpenAI
-
         if self.azure_api_key:
+            from langchain_openai import AzureChatOpenAI
             return AzureChatOpenAI(
                 azure_deployment=self.deployment,
                 openai_api_version=self.api_version,
@@ -49,41 +121,22 @@ class OpenAIService:
                 temperature=temperature
             )
         elif self.openai_api_key:
+            from langchain_openai import ChatOpenAI
             return ChatOpenAI(
                 model=self.model_name,
                 api_key=self.openai_api_key,
                 temperature=temperature
             )
         else:
-            global _SHARED_MOCK_MODEL
-            if _SHARED_MOCK_MODEL is None:
-                print("[WARN] No OpenAI Keys found. Initializing Shared Mock Chat Model.")
-                from langchain_community.chat_models import FakeListChatModel
-                # Sequence of responses for the full flow:
-                # 1. Sim: Initial Input -> "I am disappointed..."
-                # 2. Chair: Finalize -> JSON
-                # 3. Critic: Approve -> JSON
-                # 4. Intent Confirmer: Ask -> JSON
-                # 5. Sim: Confirm -> "Yes"
-                # 6. Reframe Proposer: Propose -> JSON
-                # 7. Sim: Accept -> "That sounds good"
-                # 8. Action Nudge: Generate -> JSON
-                # 9. Sim: Evaluate -> "Score..."
-                _SHARED_MOCK_MODEL = FakeListChatModel(responses=[
-                    "I am disappointed by the rain in Kyoto.", 
-                    '{"next_step": "FINALIZE", "deep_intent": "User is sad about rain."}',
-                    '{"status": "APPROVE"}',
-                    '{"confirmation_question": "Are you sad about the rain?"}',
-                    "Yes, that is correct.",
-                    '{"reframe_statement": "Rain is cozy.", "check_question": "Do you like coziness?"}',
-                    "Yes, I like that.",
-                    '{"reframed_perspective": "Rain is cozy.", "concrete_next_step": "Go to a cafe.", "invitation_text": "Visit a cafe?", "revision_question": "How is this?"}',
-                    "Score: 5/5. Comment: Good test."
-                ])
-            return _SHARED_MOCK_MODEL
+            print("WARNING: No OpenAI Credentials. Returning MockChatModel.")
+            return MockChatModel()
+
 
     def chat_completion(self, messages, temperature=0.7):
         if not self.client:
+            # Mock Logic for Translation (used by CometService)
+            if "Translate" in messages[0]['content'] or "translation" in messages[0]['content']:
+                return "I want to find peace."
             last_msg = messages[-1]['content']
             return f"[Mock LLM Response] I processed: {last_msg[:20]}..."
 

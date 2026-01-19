@@ -1,0 +1,2 @@
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_01", "level": "Lv1", "timestamp": 1768789939.3072972}
+{"type": "END", "condition": "C0", "episode_id": "S_P001_01", "overall_success": false, "final_score": "Score: 0/5. Comment: There is no system nudge provided in this example, so it does not meet any of the specified requirements.", "nudge_content": {}}

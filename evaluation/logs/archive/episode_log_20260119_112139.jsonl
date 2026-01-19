@@ -1,0 +1,2 @@
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_01", "level": "Lv1", "timestamp": 1768789299.4051998}
+{"type": "ERROR", "episode_id": "S_P001_01", "error_message": "'\\n  \"reasoning\"'"}

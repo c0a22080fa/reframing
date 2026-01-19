@@ -1,0 +1,2 @@
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_01", "level": "Lv1", "timestamp": 1768790190.8067663}
+{"type": "END", "condition": "C0", "episode_id": "S_P001_01", "overall_success": false, "final_score": "Score: 0/5. Comment: There is no system nudge provided, so it does not address or guide the selection of an indoor activity or covered walkway that captures the \"Kyoto atmosphere.\"", "nudge_content": {}}

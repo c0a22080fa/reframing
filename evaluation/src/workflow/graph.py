@@ -269,64 +269,126 @@ def critic_edge(state: AgentState):
     else:
         return "profiler_chair" # Loop back
 
-# --- Graph ---
+# --- Baseline Node ---
+def node_baseline_agent(state: AgentState):
+    """
+    C0 Baseline: Single Agent doing everything.
+    """
+    print("--- [Node] Baseline Agent ---")
+    openai_service = OpenAIService()
+    llm = openai_service.get_chat_model()
+    template = load_prompt("agent_baseline.txt")
+    
+    prompt = template.format(
+        input=state['input'],
+        user_context=state.get('user_context', "")
+    )
+    
+    response = llm.invoke([HumanMessage(content=prompt)])
+    content = response.content
+    print(f"   -> Baseline Output: {content}")
+    
+    # Parse Nudge directly
+    nudge = {}
+    try:
+        import re
+        # Try to find JSON block, handling markdown fences
+        json_match = re.search(r'\{.*\}', content, re.DOTALL)
+        if json_match:
+            json_str = json_match.group()
+            nudge = json.loads(json_str)
+        else:
+            print("No JSON found in baseline output")
+    except Exception as e:
+        print(f"Error parsing baseline JSON: {e}")
+        
+    return {"nudge": json_str if json_match else "{}", "phase": "FINISHED"}
 
-def build_graph():
+# --- Graph Builder ---
+
+def build_graph(condition="C1"):
+    """
+    Builds the LangGraph based on condition.
+    C0: Baseline (Single Agent)
+    C1: Proposed (Multi-Agent)
+    """
     workflow = StateGraph(AgentState)
     
+    # Common Node: Input Processor (optional for C0 but good for logging)
     workflow.add_node("input_processor", node_input_processor)
-    workflow.add_node("router", node_router)
-    
-    # Abduction Loop
-    workflow.add_node("profiler_chair", node_profiler_chair)
-    workflow.add_node("witness_comet", node_witness)
-    workflow.add_node("explorer_agent", node_explorer)
-    workflow.add_node("critic_agent", node_critic)
-    
-    # Multi-Turn Nodes
-    workflow.add_node("intent_confirmer", node_intent_confirmer)
-    workflow.add_node("reframe_proposer", node_reframe_proposer)
-    workflow.add_node("action_nudge", node_action_nudge)
-    
-    # Flow
     workflow.set_entry_point("input_processor")
-    workflow.add_edge("input_processor", "router")
     
-    workflow.add_conditional_edges(
-        "router",
-        router_edge,
-        {
-            "profiler_chair": "profiler_chair",
-            "reframe_proposer": "reframe_proposer",
-            "action_nudge": "action_nudge"
-        }
-    )
-    
-    workflow.add_conditional_edges(
-        "profiler_chair",
-        chair_edge,
-        {
-            "witness_comet": "witness_comet",
-            "explorer_agent": "explorer_agent",
-            "critic_agent": "critic_agent"
-        }
-    )
-    
-    workflow.add_edge("witness_comet", "profiler_chair")
-    workflow.add_edge("explorer_agent", "profiler_chair")
-    
-    workflow.add_conditional_edges(
-        "critic_agent",
-        critic_edge,
-        {
-            "intent_confirmer": "intent_confirmer",
-            "profiler_chair": "profiler_chair"
-        }
-    )
-    
-    # Multi-Turn Interrupts: Each output node ends the graph run so we can return to user
-    workflow.add_edge("intent_confirmer", END)
-    workflow.add_edge("reframe_proposer", END)
-    workflow.add_edge("action_nudge", END)
-    
-    return workflow.compile()
+    if condition == "C0":
+        # === C0: Baseline ===
+        workflow.add_node("baseline_agent", node_baseline_agent)
+        
+        # Edges
+        workflow.add_edge("input_processor", "baseline_agent")
+        workflow.add_edge("baseline_agent", END)
+        
+    else:
+        # === C1: Proposed (Multi-Agent) ===
+        workflow.add_node("router", node_router)
+        
+        # Abduction Cluster
+        workflow.add_node("chair", node_profiler_chair)
+        workflow.add_node("witness", node_witness)
+        workflow.add_node("explorer", node_explorer)
+        workflow.add_node("critic", node_critic)
+        
+        # Interaction Nodes
+        workflow.add_node("intent_confirmer", node_intent_confirmer)
+        workflow.add_node("reframe_proposer", node_reframe_proposer)
+        workflow.add_node("action_nudge", node_action_nudge) # Nudge Generator
+        
+        # Edges
+        # Input -> Router
+        workflow.add_edge("input_processor", "router")
+        
+        # Router Logic
+        workflow.add_conditional_edges(
+            "router",
+            lambda x: x["next_step"],
+            {
+                "START_ABDUCTION": "chair", 
+                "RESTART_ABDUCTION": "chair",
+                "GOTO_REFRAME": "reframe_proposer",
+                "GOTO_ACTION": "action_nudge"
+            }
+        )
+        
+        # Chair Logic
+        workflow.add_conditional_edges(
+            "chair",
+            lambda x: x["next_step"],
+            {
+                "CALL_COMET": "witness",
+                "CALL_EXPLORER": "explorer",
+                "FINALIZE": "critic", 
+                "FAILED": END
+            }
+        )
+        
+        # Tools Return to Chair
+        workflow.add_edge("witness", "chair")
+        workflow.add_edge("explorer", "chair")
+        
+        # Critic Logic -> Intent Confirmer or Loop
+        workflow.add_conditional_edges(
+            "critic",
+            lambda x: x["next_step"],
+            {
+                "APPROVE": "intent_confirmer",
+                "REJECT": "chair" # Loop back
+            }
+        )
+        
+        # Interaction Logic (Loop back to router to parse user response)
+        workflow.add_edge("intent_confirmer", "router") # Wait for user input
+        workflow.add_edge("reframe_proposer", "router") # Wait for user input
+        
+        # Action Nudge -> END (Phase 3)
+        workflow.add_edge("action_nudge", END)
+
+    app = workflow.compile()
+    return app

@@ -20,6 +20,8 @@ INSTRUCTIONS:
 4. Compose an Invitation: A warm, agency-preserving message.
 5. Add a Revision Question: To check if the user agrees.
 
+IMPORTANT: The 'reframed_perspective', 'concrete_next_step', 'invitation_text', and 'revision_question' MUST be written in JAPANESE.
+
 OUTPUT FORMAT (JSON):
 {{
   "east_justification": {{

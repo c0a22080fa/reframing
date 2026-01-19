@@ -1,0 +1,2 @@
+{"type": "START", "condition": "C1", "persona_id": "P001", "episode_id": "S_P001_01", "level": "Lv1", "timestamp": 1768786884.3162482}
+{"type": "END", "condition": "C1", "episode_id": "S_P001_01", "overall_success": false, "final_score": "[Mock Chat Model Default Response]", "nudge_content": {}}

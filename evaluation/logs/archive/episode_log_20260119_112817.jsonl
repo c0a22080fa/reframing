@@ -1,0 +1,2 @@
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_01", "level": "Lv1", "timestamp": 1768789697.062432}
+{"type": "END", "condition": "C0", "episode_id": "S_P001_01", "overall_success": false, "final_score": "Score: 0/5. Comment: There is no system nudge provided in the prompt, so it cannot be rated against the requirements.", "nudge_content": {}}

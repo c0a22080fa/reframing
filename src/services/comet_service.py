@@ -52,12 +52,15 @@ class CometService:
 
         input_ids = self.tokenizer(f"{input_text} {relation} [GEN]", return_tensors="pt").input_ids.to(self.device)
         
+        attention_mask = input_ids.ne(self.tokenizer.pad_token_id).long()
+        
         with torch.no_grad():
             outputs = self.model.generate(
                 input_ids,
-                max_new_tokens=10, # Keep short for atomic relations
-                num_beams=5,
-                num_return_sequences=5,
+                attention_mask=attention_mask,
+                max_new_tokens=16, # Increased slightly
+                num_beams=3, # Reduced beams to potential avoid degradation
+                num_return_sequences=3,
                 early_stopping=True,
                 pad_token_id=self.tokenizer.pad_token_id
             )

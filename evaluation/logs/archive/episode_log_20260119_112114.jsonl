@@ -1,0 +1,40 @@
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_01", "level": "Lv1", "timestamp": 1768789274.756579}
+{"type": "ERROR", "episode_id": "S_P001_01", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_02", "level": "Lv1", "timestamp": 1768789275.7652586}
+{"type": "ERROR", "episode_id": "S_P001_02", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_03", "level": "Lv2", "timestamp": 1768789276.387184}
+{"type": "ERROR", "episode_id": "S_P001_03", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_04", "level": "Lv2", "timestamp": 1768789277.0098863}
+{"type": "ERROR", "episode_id": "S_P001_04", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_05", "level": "Lv2", "timestamp": 1768789277.6353474}
+{"type": "ERROR", "episode_id": "S_P001_05", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_06", "level": "Lv2", "timestamp": 1768789278.261514}
+{"type": "ERROR", "episode_id": "S_P001_06", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_07", "level": "Lv3", "timestamp": 1768789278.8826354}
+{"type": "ERROR", "episode_id": "S_P001_07", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_08", "level": "Lv3", "timestamp": 1768789279.510315}
+{"type": "ERROR", "episode_id": "S_P001_08", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_09", "level": "Lv4", "timestamp": 1768789280.132523}
+{"type": "ERROR", "episode_id": "S_P001_09", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P001", "episode_id": "S_P001_10", "level": "Lv4", "timestamp": 1768789280.7535985}
+{"type": "ERROR", "episode_id": "S_P001_10", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_01", "level": "Lv1", "timestamp": 1768789281.3694644}
+{"type": "ERROR", "episode_id": "S_P002_01", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_02", "level": "Lv1", "timestamp": 1768789282.0211432}
+{"type": "ERROR", "episode_id": "S_P002_02", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_03", "level": "Lv2", "timestamp": 1768789282.6457665}
+{"type": "ERROR", "episode_id": "S_P002_03", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_04", "level": "Lv2", "timestamp": 1768789283.2680376}
+{"type": "ERROR", "episode_id": "S_P002_04", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_05", "level": "Lv2", "timestamp": 1768789283.897946}
+{"type": "ERROR", "episode_id": "S_P002_05", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_06", "level": "Lv2", "timestamp": 1768789284.5152934}
+{"type": "ERROR", "episode_id": "S_P002_06", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_07", "level": "Lv3", "timestamp": 1768789285.1434667}
+{"type": "ERROR", "episode_id": "S_P002_07", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_08", "level": "Lv3", "timestamp": 1768789285.7604654}
+{"type": "ERROR", "episode_id": "S_P002_08", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_09", "level": "Lv4", "timestamp": 1768789286.3715875}
+{"type": "ERROR", "episode_id": "S_P002_09", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
+{"type": "START", "condition": "C0", "persona_id": "P002", "episode_id": "S_P002_10", "level": "Lv4", "timestamp": 1768789286.9955447}
+{"type": "ERROR", "episode_id": "S_P002_10", "error_message": "[Errno 2] No such file or directory: '/home/shimada-m/project_university/reframing/evaluation/src/prompts/agent_baseline.txt'"}
