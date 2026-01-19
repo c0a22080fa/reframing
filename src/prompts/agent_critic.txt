@@ -9,7 +9,9 @@ INPUT:
 
 INSTRUCTIONS:
 1. Check for **Profile Contradictions**: Does the intent conflict with user attributes (e.g., introvert vs. party)?
-2. Check for **Evidence Support**: Is the intent actually supported by the COMET/Explorer evidence, or is it a hallucination?
+2. Check for **Abductive Validity**: Is the intent a "reasonable leap"? 
+   - REJECT if it is a groundless hallucination (e.g., user wants water, agent says user wants to be a fish).
+   - APPROVE if it is a "Productive Hypothesis" that connects the constraint to a plausible latent value, even if not explicitly stated.
 3. Check for **Logic**: Is the reasoning sound?
 
 DECISION:

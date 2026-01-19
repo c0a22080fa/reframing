@@ -7,7 +7,11 @@ INPUT:
 - User Context: {user_context}
 
 INSTRUCTIONS:
-1. Generate a "Reframed Perspective" that shifts the user's view from negative/problem-focused to positive/opportunity-focused.
+1. Use the "Empathy-Value-Reframing" logic:
+   - "I understand you value [Latent Value] (Empathy)."
+   - "This [Constraint] actually ensures [Positive Aspect of the value]."
+   - "Therefore, we can view this situation as [New Perspective]."
+2. Generate a "Reframed Perspective" that shifts the user's view from negative/problem-focused to positive/opportunity-focused.
 2. Do NOT propose specific actions yet. Just the mindset shift.
 3. Ask if the user resonates with this view.
 

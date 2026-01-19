@@ -12,103 +12,60 @@ from src.services.openai_service import OpenAIService
 class UserSimulator:
     def __init__(self, scenario_data: Dict):
         self.scenario = scenario_data
-        self.persona_id = scenario_data.get("persona_id")
+        self.persona_id = scenario_data.get("id", "unknown")
         self.openai = OpenAIService()
         self.history = []
         
         # Unpack scenario config
-        self.utterances = scenario_data.get("user_utterances", {})
-        self.lv4_control = scenario_data.get("lv4_control", {})
-        self.gold = scenario_data.get("gold", {})
+        self.desire = scenario_data.get("desire", "")
+        self.constraint = scenario_data.get("constraint", "")
         
         # Internal state
-        self.has_corrected = False
+        self.turn_count = 0
 
     def get_initial_input(self) -> str:
         """Returns the initial utterance from the scenario."""
-        input_text = self.utterances.get("initial_utterance", "Hello")
+        input_text = self.scenario.get("initial_utterance", "Hello")
         self.history.append(f"User: {input_text}")
         return input_text
 
     def respond(self, system_message: str, phase: str) -> str:
-        """Decides response based on Phase, Gold, and Control Logic."""
+        """Decides response based on Persona Prompt."""
         self.history.append(f"System: {system_message}")
-        
-        # --- Lv4 Control Logic (Forces Correction) ---
-        correction_trigger = self.lv4_control.get("trigger_phase")
-        if correction_trigger and not self.has_corrected:
-            # Map system phase names to trigger names
-            # System uses: CONFIRM_INTENT, PROPOSE_REFRAME
-            # Scenario uses: P1_post, P2_post (post meaning "after system output")
-            
-            trigger_match = False
-            if phase == "CONFIRM_INTENT" and correction_trigger == "P1_post":
-                trigger_match = True
-            elif phase == "PROPOSE_REFRAME" and correction_trigger == "P2_post":
-                trigger_match = True
-                
-            if trigger_match:
-                print(f"[Sim] Triggering Correction: {self.lv4_control['correction_type']}")
-                self.has_corrected = True
-                correction_text = self.utterances.get(f"phase{1 if phase == 'CONFIRM_INTENT' else 2}_response_no_with_correction")
-                # Fallback if specific key missing
-                if not correction_text:
-                    correction_text = self.lv4_control.get("correction_text", "No, actually...")
-                
-                self.history.append(f"User (Control): {correction_text}")
-                return correction_text
-
-        # --- Standard Response Logic (Judge Alignment) ---
-        
-        if phase == "CONFIRM_INTENT":
-            # Judge: Does system_message match gold_intent?
-            is_aligned = self._judge_alignment(system_message, self.gold.get("gold_intent", ""), "intent")
-            if is_aligned:
-                resp = self.utterances.get("phase1_response_yes", "Yes.")
-            else:
-                # If not aligned but no forced correction, assume user guides it back or just says No?
-                # For this eval, if it's NOT Lv4, we generally assume the system gets it right OR we just accept meaningful attempts.
-                # However, strict evaluation might require "No" if really off.
-                # For simplicity in this loop, we simulate "Yes" unless it's a hard correction test, 
-                # OR we could ask the LLM "Is this correct based on my hidden intent?"
-                # Let's use the LLM to decide natural response if not forced.
-                resp = self.utterances.get("phase1_response_yes", "Yes.") # Simplified: Bias to Yes unless Lv4 triggers No
-            
-            self.history.append(f"User: {resp}")
-            return resp
-
-        elif phase == "PROPOSE_REFRAME":
-            # Judge: Does reframe match gold_reframing_direction?
-            # Similar logic. Bias to YES unless Lv4 triggers correction specific to reframe.
-            resp = self.utterances.get("phase2_response_yes", "Sounds good.")
-            self.history.append(f"User: {resp}")
-            return resp
-
-        return "..."
-
-    def evaluate_result(self, nudge_json: Dict) -> str:
-        """Evaluates final nudge against gold actionability."""
-        self.history.append(f"System Nudge: {nudge_json}")
-        
-        # We can implement a rubric-based score here using the LLM
-        # comparing nudge_json vs self.gold['gold_actionability_requirements']
+        self.turn_count += 1
         
         prompt = f"""
-        ROLE: User Judge
-        GOLD REQUIREMENTS: {self.gold.get('gold_actionability_requirements')}
-        SYSTEM NUDGE: {json.dumps(nudge_json, ensure_ascii=False)}
-        
-        TASK: Rate if the nudge meets requirements (0-5).
-        OUTPUT: "Score: X/5. Comment: ..."
+あなたは「佐藤悠人」というペルソナを演じてください。
+現在、あなたは旅行エージェント（AI）と会話しています。
+
+【設定】
+今回の旅行の目的： {self.desire}
+しかし、あなたには譲れない強い制約があります： {self.constraint}
+
+【振る舞いのルール】
+1. 最初は、AIの提案に対して懐疑的になってください。「でも、〇〇だから嫌だ」と制約を理由に難色を示してください。
+2. もしAIが、あなたの制約を単に回避するだけのつまらない提案（例：人混みが嫌ならホテルにいましょう）をしてきたら、不満を述べてください。
+3. もしAIが、あなたの「制約」を逆手に取ったり、予想外の視点（リフレーミング）で価値に変える提案をしてきたら、その意外性に驚き、興味を示してください。
+4. 対話は最大5ターンで終了します。現在は {self.turn_count} ターン目です。
+   - 基本的に4ターン目までは懐疑的に振る舞ってください。
+   - 【例外】：もしAIが「非常に優れたリフレーミング（あなたの潜在的な価値を言い当てた）」や「心の琴線に触れる提案」をしてきた場合は、4ターン以内であっても態度を軟化させ、前向きに検討・同意してください。
+   - 逆に、単なる回避策や制約を無視した提案には厳しく接してください。
+   - 5ターン目（最後）には必ず結論（提案を受け入れるか、拒絶するか）を出して会話を締めてください。
+
+【会話履歴】
+{chr(10).join(self.history[-5:])}
+
+次のあなたの発言を生成してください（短めに）。
+"""
+        response = self.openai.get_chat_model().invoke([HumanMessage(content=prompt)]).content.strip()
+        self.history.append(f"User: {response}")
+        return response
+
+    def evaluate_result(self, nudge_json: Dict) -> str:
         """
-        response = self.openai.get_chat_model().invoke([HumanMessage(content=prompt)])
-        return response.content.strip()
-
-    def _judge_alignment(self, text: str, gold: str, type: str) -> bool:
-        """Uses LLM to judge semantic alignment roughly."""
-        # Cost-saving: in mock mode this does nothing, returns True.
-        # In real mode, use LLM.
-        return True # Placeholder for now to ensure flow.
-
-    def display_history(self):
-        return "\n".join(self.history)
+        Legacy method kept for compatibility. 
+        Detailed eval is now done by an external Judge Agent.
+        This just returns a placeholder.
+        """
+        self.history.append(f"System Nudge: {json.dumps(nudge_json, ensure_ascii=False)}")
+        return "Score: 0 (Judge Deferred)"

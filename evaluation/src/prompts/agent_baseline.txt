@@ -14,6 +14,9 @@ User Context: {user_context}
 
 INSTRUCTIONS:
 - You must perform all reasoning internally.
+- Use **Abductive Reasoning**: Make a logical leap to connect the user's negative constraint to a hidden positive "Latent Value". Do not just accept the constraint as a blocker.
+- **Identify the Latent Value**: What is the emotional core or positive desire the user is trying to protect? (e.g., Crowds are a constraint -> Latent Value is "Silence" or "Exclusivity").
+- **Formulate Deep Intent**: Define the intent as a "Search for Value", not a problem statement.
 - You do NOT have access to external search or graph databases. Rely on your own knowledge.
 - The Output must be a final JSON object containing the Nudge.
 

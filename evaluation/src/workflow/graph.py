@@ -12,6 +12,7 @@ from src.services.comet_service import CometService
 from src.services.search_service import SearchService
 from src.services.neo4j_service import Neo4jService
 from src.agents.context_agent import ContextAgent
+from utils.trace_logger import log_trace
 
 # --- Helper ---
 def load_prompt(filename: str) -> str:
@@ -40,6 +41,9 @@ class AgentState(TypedDict):
     confirmed_intent: bool
     accepted_reframe: bool
     dialogue_output: str # The question/proposal to show to user
+    episode_id: str # For logging
+    metrics_data: Optional[dict] # detailed metrics (loops, tools, reasoning)
+    scenario_logger: Optional[object] # ScenarioLogger instance for detailed process logging
 
 # --- Nodes ---
 
@@ -68,23 +72,51 @@ def node_router(state: AgentState):
     if current_phase == "ABDUCTION":
         return {"next_step": "START_ABDUCTION"}
     
-    # Check User Response (Simple Yes/No Parser)
-    user_input = state["input"].lower()
-    is_positive = any(x in user_input for x in ["yes", "yeah", "ok", "sure", "いいよ", "はい", "そう", "お願い"])
-    is_negative = any(x in user_input for x in ["no", "nope", "not", "i don't", "いいえ", "違う"])
+    
+    # Use LLM for robust Yes/No classification
+    print("   [Router] Classifying user response...")
+    openai_service = OpenAIService()
+    llm = openai_service.get_chat_model()
+    
+    # Simple classification prompt
+    match_prompt = f"""
+    Analyze the following Japanese user response to a system's confirmation question.
+    User Response: "{state['input']}"
+    
+    Does the user AGREE or CONFIRM the system's understanding? 
+    Even if they add a condition (e.g. "Yes, but..."), if the core intent is confirmed, answer YES.
+    If they deny, correct, or say no, answer NO.
+    
+    Output only YES or NO.
+    """
+    
+    res = llm.invoke([HumanMessage(content=match_prompt)]).content.strip().upper()
+    is_positive = "YES" in res
     
     if current_phase == "CONFIRM_INTENT":
         if is_positive:
+            print(f"   [Router] User confirmed intent. Moving to Reframing.")
+            log_trace(state.get("episode_id"), "Router", f"Input: {state['input']} -> Classification: POSITIVE -> PROPOSE_REFRAME")
             return {"confirmed_intent": True, "phase": "PROPOSE_REFRAME", "next_step": "GOTO_REFRAME"}
         else:
-            return {"confirmed_intent": False, "phase": "ABDUCTION", "next_step": "RESTART_ABDUCTION", "critic_feedback": "User rejected the intent interpretation. Try again."}
+            print(f"   [Router] User rejected intent. Restarting Abduction.")
+            print(f"   [Router] User rejected intent. Restarting Abduction.")
+            log_trace(state.get("episode_id"), "Router", f"Input: {state['input']} -> Classification: NEGATIVE -> RESTART_ABDUCTION")
+            
+            # Metric: Increment Loop Count
+            m = state.get("metrics_data") or {"loop_count": 0, "tool_usage": [], "reframe_statement": "", "nudge": ""}
+            m["loop_count"] += 1
+            
+            return {"confirmed_intent": False, "phase": "ABDUCTION", "next_step": "RESTART_ABDUCTION", "critic_feedback": "User rejected the intent interpretation. Try again.", "metrics_data": m}
             
     elif current_phase == "PROPOSE_REFRAME":
         if is_positive:
+            log_trace(state.get("episode_id"), "Router", f"Input: {state['input']} -> Classification: POSITIVE -> SUGGEST_ACTION")
             return {"accepted_reframe": True, "phase": "SUGGEST_ACTION", "next_step": "GOTO_ACTION"}
         else:
              # Fallback: Just go to action anyway, or retry. For now, proceed with caveat.
-             return {"accepted_reframe": False, "phase": "SUGGEST_ACTION", "next_step": "GOTO_ACTION"}
+            log_trace(state.get("episode_id"), "Router", f"Input: {state['input']} -> Classification: NEGATIVE -> SUGGEST_ACTION (with caveat)")
+            return {"accepted_reframe": False, "phase": "SUGGEST_ACTION", "next_step": "GOTO_ACTION"}
              
     return {"next_step": "START_ABDUCTION"}
 
@@ -133,11 +165,31 @@ def node_profiler_chair(state: AgentState):
     except:
         pass
         
+
+    
+    log_trace(state.get("episode_id", "N/A"), "Profiler Chair", {
+        "reasoning": content,
+        "next_step": next_step,
+        "deep_intent": deep_intent
+    })
+    
+    # Metrics: Capture Tool Usage
+    m = state.get("metrics_data") or {"loop_count": 0, "tool_usage": [], "reframe_statement": "", "nudge": ""}
+    if next_step == "CALL_COMET":
+        m["tool_usage"].append({"tool": "COMET", "relations": comet_relations})
+    elif next_step == "CALL_EXPLORER":
+        search_query = res.get("search_query", "")
+        m["tool_usage"].append({"tool": "EXPLORER", "query": search_query})
+
+    
     return {
         "next_step": next_step, 
         "deep_intent": deep_intent if deep_intent else state.get("deep_intent"),
         "comet_relations_override": comet_relations,
-        "steps": [next_step]
+        "deep_intent": deep_intent if deep_intent else state.get("deep_intent"),
+        "comet_relations_override": comet_relations,
+        "steps": [next_step],
+        "metrics_data": m
     }
 
 def node_witness(state: AgentState):
@@ -147,6 +199,15 @@ def node_witness(state: AgentState):
     comet = CometService(openai_service)
     relations = state.get("comet_relations_override", ["xWant"])
     res = comet.translate_and_infer(state["input"], relations)
+    
+    # Log to ScenarioLogger
+    logger = state.get("scenario_logger")
+    if logger:
+        logger.add_step("COMET", {
+            "relations": relations,
+            "inferences": res
+        })
+    
     return {"comet_evidence": res}
 
 def node_explorer(state: AgentState):
@@ -154,6 +215,15 @@ def node_explorer(state: AgentState):
     print("--- [Tool] Explorer ---")
     search = SearchService()
     res = search.search(state["input"], [])
+    
+    # Log to ScenarioLogger
+    logger = state.get("scenario_logger")
+    if logger:
+        logger.add_step("Explorer", {
+            "query": state["input"],
+            "results": res
+        })
+    
     return {"explorer_evidence": res}
 
 def node_critic(state: AgentState):
@@ -216,14 +286,30 @@ def node_reframe_proposer(state: AgentState):
     res = llm.invoke([HumanMessage(content=prompt)])
     
     output = res.content
+    reframe_text = ""
+    check_question = ""
     try:
          import re
          j = json.loads(re.search(r'\{.*\}', res.content, re.DOTALL).group())
          output = f"{j.get('reframe_statement')}\n\n{j.get('check_question')}"
+         reframe_text = j.get('reframe_statement', '')
+         check_question = j.get('check_question', '')
     except:
         pass
+    
+    # Metrics: Preserve existing data and add reframe statement
+    m = state.get("metrics_data") or {"loop_count": 0, "tool_usage": [], "reframe_statement": "", "nudge": ""}
+    m["reframe_statement"] = reframe_text
+    
+    # Log to ScenarioLogger
+    logger = state.get("scenario_logger")
+    if logger:
+        logger.add_step("Reframe Proposer", {
+            "reframe_statement": reframe_text,
+            "check_question": check_question
+        })
         
-    return {"dialogue_output": output, "phase": "PROPOSE_REFRAME"}
+    return {"dialogue_output": output, "phase": "PROPOSE_REFRAME", "metrics_data": m}
 
 def node_action_nudge(state: AgentState):
     """Phase 3: Concrete Action"""
@@ -310,7 +396,9 @@ def build_graph(condition="C1"):
     """
     Builds the LangGraph based on condition.
     C0: Baseline (Single Agent)
-    C1: Proposed (Multi-Agent)
+    C1: Proposed (Multi-Agent with Tools and Dialogue)
+    C2: Multi-Agent WITHOUT External Knowledge (no COMET/Explorer)
+    C3: Multi-Agent WITHOUT Agreement Steps (skip Intent Confirmer/Reframe Proposer)
     """
     workflow = StateGraph(AgentState)
     
@@ -325,6 +413,155 @@ def build_graph(condition="C1"):
         # Edges
         workflow.add_edge("input_processor", "baseline_agent")
         workflow.add_edge("baseline_agent", END)
+        
+    elif condition == "C2":
+        # === C2: Multi-Agent WITHOUT External Knowledge ===
+        # Same structure as C1 but Chair always goes to FINALIZE (skip tools)
+        workflow.add_node("router", node_router)
+        workflow.add_node("chair", node_profiler_chair)
+        workflow.add_node("critic", node_critic)
+        workflow.add_node("intent_confirmer", node_intent_confirmer)
+        workflow.add_node("reframe_proposer", node_reframe_proposer)
+        workflow.add_node("action_nudge", node_action_nudge)
+        
+        # Edges
+        workflow.add_edge("input_processor", "router")
+        
+        workflow.add_conditional_edges(
+            "router",
+            lambda x: x["next_step"],
+            {
+                "START_ABDUCTION": "chair", 
+                "RESTART_ABDUCTION": "chair",
+                "GOTO_REFRAME": "reframe_proposer",
+                "GOTO_ACTION": "action_nudge"
+            }
+        )
+        
+        # Chair: Force FINALIZE only (override tool calls)
+        workflow.add_conditional_edges(
+            "chair",
+            lambda x: "FINALIZE" if x.get("next_step") in ["CALL_COMET", "CALL_EXPLORER", "FINALIZE"] else "FAILED",
+            {
+                "FINALIZE": "critic",
+                "FAILED": END
+            }
+        )
+        
+        workflow.add_conditional_edges(
+            "critic",
+            lambda x: x["next_step"],
+            {
+                "APPROVE": "intent_confirmer",
+                "REJECT": "chair"
+            }
+        )
+        
+        workflow.add_edge("intent_confirmer", END)
+        workflow.add_edge("reframe_proposer", END)
+        workflow.add_edge("action_nudge", END)
+        
+    elif condition == "C3":
+        # === C3: Multi-Agent WITHOUT Agreement Steps ===
+        # Same as C1 but skip Intent Confirmer and Reframe Proposer
+        workflow.add_node("router", node_router)
+        workflow.add_node("chair", node_profiler_chair)
+        workflow.add_node("witness", node_witness)
+        workflow.add_node("explorer", node_explorer)
+        workflow.add_node("critic", node_critic)
+        workflow.add_node("action_nudge", node_action_nudge)
+        
+        # Edges
+        workflow.add_edge("input_processor", "router")
+        
+        # Router: simplified - just go to chair or action
+        workflow.add_conditional_edges(
+            "router",
+            lambda x: x["next_step"] if x.get("next_step") == "GOTO_ACTION" else "START_ABDUCTION",
+            {
+                "START_ABDUCTION": "chair",
+                "RESTART_ABDUCTION": "chair", 
+                "GOTO_ACTION": "action_nudge"
+            }
+        )
+        
+        workflow.add_conditional_edges(
+            "chair",
+            lambda x: x["next_step"],
+            {
+                "CALL_COMET": "witness",
+                "CALL_EXPLORER": "explorer",
+                "FINALIZE": "critic",
+                "FAILED": END
+            }
+        )
+        
+        workflow.add_edge("witness", "chair")
+        workflow.add_edge("explorer", "chair")
+        
+        # Critic: Go directly to Action Nudge (skip dialogue)
+        workflow.add_conditional_edges(
+            "critic",
+            lambda x: "APPROVE" if x.get("next_step") == "APPROVE" else "REJECT",
+            {
+                "APPROVE": "action_nudge",  # Direct to action, no confirmation
+                "REJECT": "chair"
+            }
+        )
+        
+        workflow.add_edge("action_nudge", END)
+        
+    elif condition == "C4":
+        # === C4: Multi-Agent WITHOUT EAST Nudge ===
+        # Full system but stops at Reframe Proposer (no concrete action nudge)
+        workflow.add_node("router", node_router)
+        workflow.add_node("chair", node_profiler_chair)
+        workflow.add_node("witness", node_witness)
+        workflow.add_node("explorer", node_explorer)
+        workflow.add_node("critic", node_critic)
+        workflow.add_node("intent_confirmer", node_intent_confirmer)
+        workflow.add_node("reframe_proposer", node_reframe_proposer)
+        # No Action Nudge node
+        
+        # Edges
+        workflow.add_edge("input_processor", "router")
+        
+        workflow.add_conditional_edges(
+            "router",
+            lambda x: x["next_step"],
+            {
+                "START_ABDUCTION": "chair",
+                "RESTART_ABDUCTION": "chair",
+                "GOTO_REFRAME": "reframe_proposer",
+                # No GOTO_ACTION since we don't have action nudge
+            }
+        )
+        
+        workflow.add_conditional_edges(
+            "chair",
+            lambda x: x["next_step"],
+            {
+                "CALL_COMET": "witness",
+                "CALL_EXPLORER": "explorer",
+                "FINALIZE": "critic",
+                "FAILED": END
+            }
+        )
+        
+        workflow.add_edge("witness", "chair")
+        workflow.add_edge("explorer", "chair")
+        
+        workflow.add_conditional_edges(
+            "critic",
+            lambda x: x["next_step"],
+            {
+                "APPROVE": "intent_confirmer",
+                "REJECT": "chair"
+            }
+        )
+        
+        workflow.add_edge("intent_confirmer", END)  # Yield for user input
+        workflow.add_edge("reframe_proposer", END)  # End here (no action nudge)
         
     else:
         # === C1: Proposed (Multi-Agent) ===
@@ -384,8 +621,8 @@ def build_graph(condition="C1"):
         )
         
         # Interaction Logic (Loop back to router to parse user response)
-        workflow.add_edge("intent_confirmer", "router") # Wait for user input
-        workflow.add_edge("reframe_proposer", "router") # Wait for user input
+        workflow.add_edge("intent_confirmer", END) # Wait for user input (Yield to run_eval)
+        workflow.add_edge("reframe_proposer", END) # Wait for user input
         
         # Action Nudge -> END (Phase 3)
         workflow.add_edge("action_nudge", END)

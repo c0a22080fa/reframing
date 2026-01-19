@@ -15,7 +15,10 @@ INSTRUCTIONS:
 You are the Chairperson. Decide the next step.
 1. If you lack intuitive understanding of "Why they want this?", request [CALL_COMET]. **(SKIP if History contains CALL_COMET)**.
 2. If you have intuition but need validation or analogous solutions, request [CALL_EXPLORER].
-3. If you have sufficient evidence and no contradictions, formulate the Deep Intent and [FINALIZE].
+3. Identify the "Latent Value": What is the positive value or emotional core that the user is trying to protect with this constraint? 
+   (e.g., Crowds are a constraint -> Latent Value is "Silence" or "Exclusivity").
+4. Formulate the Deep Intent not as a problem statement, but as a "Search for Value".
+5. If you have sufficient evidence and no contradictions, formulate the Deep Intent and [FINALIZE].
 4. If the Explorer's findings contradict the Context, request [RETRY_EXPLORER] with new instructions.
 
 OUTPUT FORMAT (JSON):

@@ -59,7 +59,7 @@ class Neo4jService:
             }
         else:
             query = """
-            MATCH (u:User {id: $user_id})-[:HAS]->(a:Attribute)
+            MATCH (u:User {id: $user_id})-[:HAS_ATTRIBUTE]->(a:Attribute)
             RETURN a.name as attribute
             """
             with self.driver.session() as session:
