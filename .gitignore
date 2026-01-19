@@ -29,3 +29,6 @@ Thumbs.db
 mosaickg/
 *.bin
 *.h5
+
+# Neo4j Data
+data/neo4j_data/
